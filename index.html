@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#0b1020">
+	<title>Yodhin Solutions — Attendance & Payroll</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+	<link rel="stylesheet" href="assets/css/styles.css">
+	<script defer src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+	<script defer src="assets/js/data.js"></script>
+	<script defer src="assets/js/payslip.js"></script>
+	<script defer src="assets/js/app.js"></script>
+</head>
+<body>
+	<header class="app-header">
+		<div class="brand">
+			<img src="assets/img/logo.svg" class="logo" alt="Yodhin Solutions logo" width="40" height="40">
+			<div class="brand-text">
+				<h1>Yodhin Solutions</h1>
+				<span>Attendance & Payroll</span>
+			</div>
+		</div>
+		<nav class="top-nav">
+			<button data-route="login" class="nav-btn" aria-label="Open Login">Login</button>
+			<button data-route="dashboard" class="nav-btn" aria-label="Open Dashboard" hidden>Dashboard</button>
+			<button data-route="employees" class="nav-btn" aria-label="Open Employees" hidden>Employees</button>
+			<button data-route="chat" class="nav-btn" aria-label="Open Teams Chat" hidden>Teams Chat</button>
+			<button data-route="payroll" class="nav-btn" aria-label="Open Payroll" hidden>Payroll</button>
+			<button data-route="hours" class="nav-btn" aria-label="Open Hours Tracker" hidden>Hours</button>
+			<button data-route="holidays" class="nav-btn" aria-label="Open Holidays" hidden>Holidays</button>
+			<button id="btn-logout" class="nav-btn" aria-label="Logout" hidden>Logout</button>
+		</nav>
+	</header>
+
+	<main id="app" role="main">
+		<section id="login" class="route">
+			<div class="login-hero">
+				<div class="login-illustration">
+					<div class="glow glow-1"></div>
+					<div class="glow glow-2"></div>
+					<h2>Welcome to Yodhin Solutions</h2>
+					<p>Experience effortless attendance, leave tracking, and payroll clarity in one elegant hub.</p>
+					<ul class="login-highlights">
+						<li>Realtime attendance visibility</li>
+						<li>Secure employee self-service</li>
+						<li>Instant payslip access</li>
+					</ul>
+				</div>
+				<div class="login-panel">
+					<div class="login-tabs" role="tablist" aria-label="Choose portal">
+						<button id="choose-client" class="tab-btn" type="button" role="tab" aria-selected="false" aria-controls="client-login-card">Admin</button>
+						<button id="choose-employee" class="tab-btn" type="button" role="tab" aria-selected="false" aria-controls="employee-login-card">Employee</button>
+					</div>
+					<div class="login-forms">
+						<div id="client-login-card" class="login-form" hidden>
+							<h3>Admin Console</h3>
+							<p class="muted">Enter the secure access code shared by HR to manage company-wide attendance and payroll.</p>
+							<form id="client-login-form" class="stack" autocomplete="off">
+								<label class="field">
+									<span>Access Code</span>
+									<input id="client-code" type="password" placeholder="e.g. YS-CLIENT" required>
+								</label>
+								<button class="primary" type="submit">Unlock Admin Console</button>
+							</form>
+							<p id="client-login-error" class="login-error"></p>
+						</div>
+						<div id="employee-login-card" class="login-form" hidden>
+							<h3>Employee Portal</h3>
+							<p class="muted">Enter your employee ID with the assigned username and password to view personal records.</p>
+							<form id="employee-login-form" class="stack" autocomplete="off">
+								<div class="field-group three">
+									<label class="field">
+										<span>Employee ID</span>
+										<input id="employee-login-id" type="text" placeholder="E001" required>
+									</label>
+									<label class="field">
+										<span>Username</span>
+										<input id="employee-login-username" type="text" placeholder="aarav.m" required>
+									</label>
+									<label class="field">
+										<span>Password</span>
+										<input id="employee-login-password" type="password" placeholder="Enter password" required>
+									</label>
+								</div>
+								<button class="primary" type="submit">Enter Employee Portal</button>
+							</form>
+							<p id="employee-login-error" class="login-error"></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section id="dashboard" class="route visible">
+			<div class="section-header">
+				<div>
+					<h2>Company Pulse</h2>
+					<p class="section-subtitle">Live insight into attendance, leaves, and upcoming celebrations.</p>
+				</div>
+				<div class="section-actions">
+					<span class="badge">Live</span>
+				</div>
+			</div>
+			<div class="section-body">
+				<div class="grid kpi-grid">
+					<div class="card kpi">
+						<h3>Total Employees</h3>
+						<div class="kpi-value" id="kpi-total-employees">0</div>
+					</div>
+					<div class="card kpi">
+						<h3>Avg. Total Leaves</h3>
+						<div class="kpi-value" id="kpi-avg-total-leaves">0</div>
+					</div>
+					<div class="card kpi">
+						<h3>Leaves Taken (This Year)</h3>
+						<div class="kpi-value" id="kpi-leaves-taken">0</div>
+					</div>
+					<div class="card kpi">
+						<h3>Pending Leaves</h3>
+						<div class="kpi-value" id="kpi-pending-leaves">0</div>
+					</div>
+				</div>
+
+				<div class="content-grid two">
+					<div class="card">
+						<h3>Upcoming Company Holidays</h3>
+						<ul id="dashboard-holidays" class="list"></ul>
+					</div>
+					<div class="card">
+						<h3>Company Fests & Events</h3>
+						<ul id="dashboard-fests" class="list"></ul>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="employees" class="route">
+			<div class="section-header">
+				<div>
+					<h2>Team Directory</h2>
+					<p class="section-subtitle">Discover roles, teams, and key contacts across Yodhin Solutions.</p>
+				</div>
+				<div class="section-actions">
+					<div class="search">
+						<input id="employee-search" type="search" placeholder="Search by name, role, team">
+					</div>
+				</div>
+			</div>
+			<div class="section-body">
+				<div class="content-columns">
+					<div class="card">
+						<div class="card-title">
+							<h3>All Employees</h3>
+							<p class="muted small">Select a teammate to open the profile panel and download payslips.</p>
+						</div>
+						<div id="employee-list" class="employee-grid"></div>
+					</div>
+
+					<div id="employee-profile" class="card profile-card" hidden>
+						<div class="profile-header">
+							<button class="link" id="back-to-list">← Back to Directory</button>
+						</div>
+						<div class="profile">
+							<div class="profile-left">
+								<img id="profile-avatar" class="avatar-lg" alt="Avatar">
+								<h2 id="profile-name"></h2>
+								<p id="profile-role" class="muted"></p>
+								<p id="profile-team"></p>
+								<p id="profile-email"></p>
+								<p id="profile-phone"></p>
+							</div>
+							<div class="profile-right">
+								<div class="grid two">
+									<div class="stat">
+										<span>Total Leaves</span>
+										<strong id="profile-total-leaves">0</strong>
+									</div>
+									<div class="stat">
+										<span>Leaves Taken</span>
+										<strong id="profile-leaves-taken">0</strong>
+									</div>
+									<div class="stat">
+										<span>Pending Leaves</span>
+										<strong id="profile-pending-leaves">0</strong>
+									</div>
+									<div class="stat">
+										<span>Salary (Monthly)</span>
+										<strong id="profile-salary">₹0</strong>
+									</div>
+								</div>
+								<div class="actions">
+									<button id="btn-generate-payslip" class="primary">Download Payslip</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="chat" class="route">
+			<div class="section-header">
+				<div>
+					<h2>Teams Chat</h2>
+					<p class="section-subtitle">Share quick updates and stay aligned with instant team conversations.</p>
+				</div>
+				<div class="section-actions">
+					<span class="badge soft">Internal</span>
+				</div>
+			</div>
+			<div class="section-body">
+				<div class="card chat">
+					<div class="card-title">
+						<h3>Conversation Stream</h3>
+						<p class="muted small">Messages stay on this device for privacy and compliance.</p>
+					</div>
+					<div id="chat-window" class="chat-window"></div>
+					<form id="chat-form" class="chat-form">
+						<select id="chat-user"></select>
+						<input id="chat-input" type="text" placeholder="Type a message..." required>
+						<button class="primary" type="submit">Send</button>
+					</form>
+				</div>
+			</div>
+		</section>
+
+		<section id="payroll" class="route">
+			<div class="section-header">
+				<div>
+					<h2>Payslip Studio</h2>
+					<p class="section-subtitle">Generate compliant payslips with on-demand salary breakups.</p>
+				</div>
+			</div>
+			<div class="section-body">
+				<div class="card">
+					<h3>Payroll</h3>
+					<div class="payroll-controls">
+						<select id="payroll-employee"></select>
+						<input id="payroll-month" type="month">
+						<button id="payroll-generate" class="primary">Generate Payslip</button>
+					</div>
+					<p id="payroll-error" class="muted" style="color:#ff5c5c;"></p>
+					<div id="payroll-summary" class="payroll-summary"></div>
+				</div>
+			</div>
+		</section>
+
+		<section id="hours" class="route">
+			<div class="section-header">
+				<div>
+					<h2>Hours Ledger</h2>
+					<p class="section-subtitle">Track daily working hours and compare against the 8-hour benchmark.</p>
+				</div>
+			</div>
+			<div class="section-body">
+				<div class="card">
+					<h3>Working Hours Tracker</h3>
+					<p class="muted">Record daily attendance hours for payroll accuracy.</p>
+					<div class="hours-controls">
+						<label class="field">
+							<span>Employee</span>
+							<select id="hours-employee"></select>
+						</label>
+						<label class="field">
+							<span>Month</span>
+							<input id="hours-month" type="month">
+						</label>
+						<label class="field">
+							<span>Date</span>
+							<input id="hours-date" type="date">
+						</label>
+						<label class="field">
+							<span>Hours Worked</span>
+							<input id="hours-value" type="number" min="0" max="24" step="0.25" placeholder="e.g. 8">
+						</label>
+						<button id="hours-save" class="primary" type="button">Save Hours</button>
+						<button id="hours-present" class="secondary" type="button">Mark Present (8h)</button>
+					</div>
+					<p id="hours-error" class="hours-feedback muted"></p>
+					<div class="hours-summary">
+						<div class="stat">
+							<span>Total Hours (Month)</span>
+							<strong id="hours-total">0 h</strong>
+						</div>
+						<div class="stat">
+							<span>Days Recorded</span>
+							<strong id="hours-days">0</strong>
+						</div>
+						<div class="stat">
+							<span>Expected (8h/day)</span>
+							<strong id="hours-expected">0 h</strong>
+						</div>
+						<div class="stat">
+							<span>Balance</span>
+							<strong id="hours-balance">0 h</strong>
+						</div>
+					</div>
+					<div class="hours-table-wrapper">
+						<table class="hours-table">
+							<thead>
+								<tr>
+									<th>Date</th>
+									<th>Hours</th>
+									<th>Status</th>
+								</tr>
+							</thead>
+							<tbody id="hours-table-body"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="holidays" class="route">
+			<div class="section-header">
+				<div>
+					<h2>Celebrations & Breaks</h2>
+					<p class="section-subtitle">Keep your team aligned with the official holiday and fest calendar.</p>
+				</div>
+			</div>
+			<div class="section-body content-grid two">
+				<div class="card">
+					<h3>Company Holidays</h3>
+					<ul id="holidays-list" class="list"></ul>
+				</div>
+				<div class="card">
+					<h3>Company Fests</h3>
+					<ul id="fests-list" class="list"></ul>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<footer class="app-footer">
+		<p>© <span id="year"></span> Yodhin Solutions. All rights reserved.</p>
+	</footer>
+</body>
+</html>
+
+
