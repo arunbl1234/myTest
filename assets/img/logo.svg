@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Yodhin Solutions">
+	<defs>
+		<linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+			<stop offset="0%" stop-color="#6d9eff"/>
+			<stop offset="100%" stop-color="#8d7bff"/>
+		</linearGradient>
+		<linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+			<stop offset="0%" stop-color="#00d3a7"/>
+			<stop offset="100%" stop-color="#6d9eff"/>
+		</linearGradient>
+	</defs>
+	<rect x="32" y="32" width="448" height="448" rx="96" fill="#0b1020" stroke="#242b55" stroke-width="8"/>
+	<g transform="translate(256,256)">
+		<path d="M-140,-40 L-20,140 L20,140 L140,-40 L100,-40 L0,100 L-100,-40 Z" fill="url(#g1)"/>
+		<circle cx="0" cy="-100" r="44" fill="url(#g2)"/>
+	</g>
+</svg>
+
+
+
