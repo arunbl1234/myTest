@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: read
 
 jobs:
   release:
@@ -19,10 +20,44 @@ jobs:
         id: tag
         run: echo "tag=v$(date +'%Y.%m.%d-%H%M')" >> "$GITHUB_OUTPUT"
 
-      - name: Create Release with auto-generated notes
+      - name: Build changelog from PR descriptions
+        id: changelog
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+
+            let since = null;
+            try {
+              const releases = await github.rest.repos.listReleases({ owner, repo, per_page: 1 });
+              if (releases.data.length > 0) {
+                since = new Date(releases.data[0].created_at);
+              }
+            } catch (e) {}
+
+            const prs = await github.rest.pulls.list({
+              owner, repo, state: 'closed', base: 'main', sort: 'updated', direction: 'desc', per_page: 20
+            });
+
+            const merged = prs.data.filter(pr => pr.merged_at && (!since || new Date(pr.merged_at) > since));
+
+            let body = '## What changed in this release\n\n';
+            if (merged.length === 0) {
+              body += '_No pull request descriptions found for this release._\n';
+            } else {
+              for (const pr of merged) {
+                body += `### #${pr.number} ${pr.title}\n\n`;
+                body += `${pr.body ? pr.body.trim() : '_No description provided._'}\n\n`;
+                body += `[View PR](${pr.html_url})\n\n---\n\n`;
+              }
+            }
+
+            core.setOutput('body', body);
+
+      - name: Create Release with descriptive notes
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
-          generate_release_notes: true
+          body: ${{ steps.changelog.outputs.body }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
