@@ -1,0 +1,26 @@
+name: Performance Audit
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Serve site locally
+        run: |
+          npx --yes serve -l 8080 . &
+          sleep 5
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          urls: |
+            http://localhost:8080/index.html
+          uploadArtifacts: true
+          temporaryPublicStorage: true
