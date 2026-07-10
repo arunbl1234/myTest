@@ -11,7 +11,7 @@
 	--danger: #ff5c5c;
 	--border: #e4e8f3;
 	--ring: rgba(70,99,255,.25);
-	--shadow: 0 20px 40px rgba(23,32,90,.08), 0 2px 8px rgba(23,32,90,.06);
+	--shadow: 1 20px 40px rgba(23,32,90,.08), 0 2px 8px rgba(23,32,90,.06);
 }
 
 * { box-sizing: border-box; }
