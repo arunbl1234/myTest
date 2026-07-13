@@ -1,13 +1,18 @@
 changelog:
   categories:
-    - title: '🚀 Features'
+    - title: '⚙️ Functionality Changes'
       labels:
         - 'feature'
         - 'enhancement'
-    - title: '🐛 Bug Fixes'
-      labels:
         - 'fix'
         - 'bug'
+        - 'functionality'
+    - title: '⚡ Performance Improvements'
+      labels:
+        - 'performance'
+        - 'perf'
+        - 'optimization'
+        - 'speed'
     - title: '🧰 Maintenance'
       labels:
         - 'chore'
